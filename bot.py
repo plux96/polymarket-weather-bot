@@ -4,10 +4,7 @@ Polymarket Weather Trading Bot v3 — Asosiy fayl.
 Modullar:
   - 10 model ob-havo prognozi (weather.py)
   - Smart timing — resolution yaqinida kuchli savdo (smart_timing.py)
-  - Model accuracy tracking — aniq modelga ko'proq vazn (accuracy.py)
-  - Kalshi arbitraj (kalshi.py)
   - WebSocket real-time narx kuzatish (ws_monitor.py)
-  - AI tahlil — Claude API (ai_analysis.py)
   - Telegram bot — komandalar va menyular (telegram_commands.py)
 """
 
@@ -105,24 +102,6 @@ def apply_smart_timing(signals: list) -> list:
     return signals
 
 
-def apply_ai_analysis(signals: list) -> list:
-    """AI tahlil bilan confidence'ni sozlaydi."""
-    try:
-        from src.monitoring.ai_analysis import check_extreme_weather, is_ai_available
-        # Faqat extreme weather tekshiruvi (bepul, AI emas)
-        checked_cities = set()
-        for s in signals:
-            city = s.get("city", "")
-            if city not in checked_cities:
-                alerts = check_extreme_weather(city, s.get("date", ""))
-                if alerts.get("has_alerts"):
-                    s["risk_flags"] = alerts.get("alerts", [])
-                    console.print(f"  [yellow]⚠️ {city}: {len(alerts.get('alerts', []))} weather alert[/]")
-                checked_cities.add(city)
-    except Exception as e:
-        console.print(f"[dim]AI analysis xatosi: {e}[/]")
-    return signals
-
 
 def run_scan():
     """Bitta to'liq scan sikli — barcha modullar integratsiya qilingan."""
@@ -146,9 +125,6 @@ def run_scan():
 
     # 2) Smart timing
     signals = apply_smart_timing(signals)
-
-    # 3) AI/Weather alerts
-    signals = apply_ai_analysis(signals)
 
     last_signals = signals
 
