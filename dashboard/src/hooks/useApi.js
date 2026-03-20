@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-const BASE_URL = 'http://localhost:8899';
+const BASE_URL = '';
 const POLL_INTERVAL = 15000;
 
 function usePollingFetch(endpoint) {
