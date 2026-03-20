@@ -31,7 +31,7 @@ MIN_EDGE = float(os.getenv("MIN_EDGE", "0.20"))
 MAX_BET = float(os.getenv("MAX_BET_USD", "1.0"))
 BANKROLL = float(os.getenv("BANKROLL", "500.0"))
 MAX_TRADES_PER_DAY = int(os.getenv("MAX_TRADES_PER_DAY", "40"))
-MAX_SIGNALS_PER_SCAN = 3
+MAX_SIGNALS_PER_SCAN = 15
 SCAN_INTERVAL_MIN = 15
 REPORT_HOURS = [0, 6, 8, 12, 18]
 
