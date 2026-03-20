@@ -284,7 +284,8 @@ def fetch_nws_forecast(city_key: str) -> dict | None:
     for p in periods:
         date = p["startTime"][:10]
         temp = p["temperature"]
-        unit = p.get("temperatureUnit", "F")
+        if temp is None:
+            continue
         if date not in daily_highs or temp > daily_highs[date]:
             daily_highs[date] = temp
 
