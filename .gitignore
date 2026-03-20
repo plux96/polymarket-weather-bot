@@ -1,0 +1,23 @@
+# Maxfiy
+.env
+*.key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Data fayllar
+trades.json
+results.json
+*.log
+*.db
+
+# Node
+dashboard/node_modules/
+dashboard/dist/
+
+# Mac
+.DS_Store
