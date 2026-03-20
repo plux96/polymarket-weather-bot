@@ -96,8 +96,13 @@ def handle_signals():
     from src.trading.strategy import scan_all_opportunities
     from src.notifications.telegram_bot import format_signals_message
 
+    import os
+    min_edge = float(os.getenv("MIN_EDGE", "0.20"))
+    bankroll = float(os.getenv("BANKROLL", "500.0"))
+    max_bet = float(os.getenv("MAX_BET_USD", "1.0"))
+
     send_msg("🔄 <b>Skanerlash...</b> (1-2 daqiqa)")
-    signals = scan_all_opportunities(min_edge=0.08, bankroll=100.0, max_bet=5.0)
+    signals = scan_all_opportunities(min_edge=min_edge, bankroll=bankroll, max_bet=max_bet)
     msg = format_signals_message(signals)
     send_msg(msg)
 
