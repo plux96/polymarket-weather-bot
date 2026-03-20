@@ -72,12 +72,16 @@ export default function TradesCard() {
                     onClick={async () => {
                       if (!t.condition_id) return;
                       try {
-                        const res = await fetch(`https://clob.polymarket.com/markets/${t.condition_id}`);
+                        const res = await fetch(`https://gamma-api.polymarket.com/markets?conditionId=${t.condition_id}`);
                         const d = await res.json();
-                        const slug = d.market_slug;
-                        window.open(`https://polymarket.com/event/${slug}`, '_blank');
+                        const eventSlug = d[0]?.events?.[0]?.slug;
+                        if (eventSlug) {
+                          window.open(`https://polymarket.com/event/${eventSlug}`, '_blank');
+                        } else {
+                          window.open(`https://polymarket.com`, '_blank');
+                        }
                       } catch {
-                        window.open(`https://polymarket.com/markets`, '_blank');
+                        window.open(`https://polymarket.com`, '_blank');
                       }
                     }}
                     style={{ cursor: t.condition_id ? 'pointer' : 'default' }}
