@@ -40,10 +40,27 @@ def _parse_resolution_dt(market_date: str, market_end_time: str) -> datetime:
     Accepted formats
     ----------------
     market_date     : "YYYY-MM-DD"
-    market_end_time : "HH:MM" or "HH:MM:SS"  (assumed UTC)
+    market_end_time : "HH:MM", "HH:MM:SS", or ISO "YYYY-MM-DDTHH:MM[:SS][Z]"
     """
-    time_parts = market_end_time.strip().split(":")
-    hour = int(time_parts[0])
+    # ISO datetime string kelsa (masalan: "2026-03-22T23:00" yoki "2026-03-22T23")
+    end = market_end_time.strip()
+    if "T" in end:
+        # Z ni olib tashlash, kerak bo'lsa
+        end = end.rstrip("Z")
+        # Minutsiz kelsa (masalan "2026-03-22T23") — ":00" qo'shish
+        if end.count(":") == 0:
+            end += ":00"
+        try:
+            dt = datetime.fromisoformat(end)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt
+        except ValueError:
+            pass
+
+    time_parts = end.split(":")
+    # "HH" formatida kelsa (minutsiz)
+    hour = int(time_parts[0]) if time_parts[0].isdigit() else 0
     minute = int(time_parts[1]) if len(time_parts) > 1 else 0
     second = int(time_parts[2]) if len(time_parts) > 2 else 0
 

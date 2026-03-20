@@ -20,8 +20,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
 
-from strategy import scan_all_opportunities, save_trade, load_trades, kelly_size
-from telegram_bot import send_signals, send_daily_summary, send_startup_message, send_message
+from src.trading.strategy import scan_all_opportunities, save_trade, load_trades, kelly_size
+from src.notifications.telegram_bot import send_signals, send_daily_summary, send_startup_message, send_message
 
 load_dotenv()
 console = Console()
@@ -91,7 +91,7 @@ def execute_trade(client, signal: dict) -> bool:
 def apply_smart_timing(signals: list) -> list:
     """Smart timing bilan signallarni qayta baholaydi."""
     try:
-        from smart_timing import get_timing_score, adjust_bet_for_timing
+        from src.trading.smart_timing import get_timing_score, adjust_bet_for_timing
         for s in signals:
             timing = get_timing_score(s.get("date", ""), s.get("date", "") + "T23:59:00Z")
             s["timing_score"] = timing.get("timing_score", 1.0)
@@ -108,7 +108,7 @@ def apply_smart_timing(signals: list) -> list:
 def apply_ai_analysis(signals: list) -> list:
     """AI tahlil bilan confidence'ni sozlaydi."""
     try:
-        from ai_analysis import check_extreme_weather, is_ai_available
+        from src.monitoring.ai_analysis import check_extreme_weather, is_ai_available
         # Faqat extreme weather tekshiruvi (bepul, AI emas)
         checked_cities = set()
         for s in signals:
@@ -211,7 +211,7 @@ def run_scan():
         # P&L hisobot (08:00 UTC)
         if current_hour == 8:
             try:
-                from tracker import evaluate_trades, format_daily_pnl
+                from src.trading.tracker import evaluate_trades, format_daily_pnl
                 stats = evaluate_trades()
                 send_message(format_daily_pnl(stats))
             except Exception as e:
@@ -223,7 +223,7 @@ def run_scan():
 def start_websocket_monitor():
     """WebSocket narx kuzatishni boshlaydi."""
     try:
-        from ws_monitor import start_ws_monitor, set_market_metadata
+        from src.monitoring.ws_monitor import start_ws_monitor, set_market_metadata
         # Hozirgi signallardagi market_id larni track qilamiz
         if last_signals:
             market_ids = [str(s.get("market_id", "")) for s in last_signals[:20] if s.get("market_id")]
@@ -257,7 +257,7 @@ def main():
     ))
 
     # Telegram menyu + polling
-    from telegram_commands import set_bot_commands, start_polling_thread
+    from src.notifications.telegram_commands import set_bot_commands, start_polling_thread
     set_bot_commands()
     start_polling_thread()
     console.print("[green]Telegram menyular + polling boshlandi[/]")
@@ -288,7 +288,7 @@ def main():
     except KeyboardInterrupt:
         console.print("\n[yellow]Bot to'xtatildi.[/]")
         try:
-            from ws_monitor import stop_ws_monitor
+            from src.monitoring.ws_monitor import stop_ws_monitor
             stop_ws_monitor()
         except Exception:
             pass

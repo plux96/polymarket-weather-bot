@@ -30,7 +30,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TRADES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trades.json")
+TRADES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "storage", "trades.json")
 
 # Alert holati (in-memory toggle)
 _alerts_enabled = False
@@ -85,7 +85,7 @@ def set_bot_commands():
 
 def handle_result():
     """P&L natijalarini ko'rsatadi."""
-    from tracker import evaluate_trades, format_daily_pnl
+    from src.trading.tracker import evaluate_trades, format_daily_pnl
     stats = evaluate_trades()
     msg = format_daily_pnl(stats)
     send_msg(msg)
@@ -93,8 +93,8 @@ def handle_result():
 
 def handle_signals():
     """Hozirgi eng yaxshi signallarni ko'rsatadi."""
-    from strategy import scan_all_opportunities
-    from telegram_bot import format_signals_message
+    from src.trading.strategy import scan_all_opportunities
+    from src.notifications.telegram_bot import format_signals_message
 
     send_msg("🔄 <b>Skanerlash...</b> (1-2 daqiqa)")
     signals = scan_all_opportunities(min_edge=0.08, bankroll=100.0, max_bet=5.0)
@@ -104,7 +104,7 @@ def handle_signals():
 
 def handle_today():
     """Bugungi savdolarni ko'rsatadi."""
-    from strategy import load_trades
+    from src.trading.strategy import load_trades
     trades = load_trades()
 
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -151,8 +151,8 @@ def handle_today():
 
 def handle_stats():
     """Umumiy statistika."""
-    from strategy import load_trades
-    from tracker import evaluate_trades
+    from src.trading.strategy import load_trades
+    from src.trading.tracker import evaluate_trades
 
     trades = load_trades()
     stats = evaluate_trades()
@@ -191,7 +191,7 @@ def handle_stats():
 
 def handle_cities():
     """Shaharlar reytingi."""
-    from tracker import evaluate_trades
+    from src.trading.tracker import evaluate_trades
     stats = evaluate_trades()
 
     by_city = stats.get("by_city", {})
@@ -220,7 +220,7 @@ def handle_cities():
 
 def handle_status():
     """Bot holati."""
-    from strategy import load_trades
+    from src.trading.strategy import load_trades
     trades = load_trades()
 
     now = datetime.now(timezone.utc)
@@ -411,7 +411,7 @@ def handle_backtest():
     """Backtestni ishga tushiradi va natijani yuboradi."""
     send_msg("🔄 <b>Backtest ishga tushmoqda...</b> (biroz kuting)")
     try:
-        from backtest import run_backtest
+        from src.trading.backtest import run_backtest
         result = run_backtest()
 
         if isinstance(result, dict):
@@ -440,7 +440,7 @@ def handle_backtest():
 def handle_accuracy():
     """Har bir shahar uchun model aniqligini ko'rsatadi."""
     try:
-        from tracker import evaluate_trades
+        from src.trading.tracker import evaluate_trades
         stats = evaluate_trades()
         by_city = stats.get("by_city", {})
 
@@ -475,8 +475,8 @@ def handle_arbitrage():
     """Kalshi va Polymarket o'rtasida arbitraj imkoniyatlarini tekshiradi."""
     send_msg("🔄 <b>Arbitraj tekshirilmoqda...</b>")
     try:
-        from kalshi import fetch_kalshi_weather_markets, find_arbitrage_opportunities, format_arbitrage_telegram
-        from markets import get_all_opportunities
+        from src.trading.kalshi import fetch_kalshi_weather_markets, find_arbitrage_opportunities, format_arbitrage_telegram
+        from src.trading.markets import get_all_opportunities
         poly_markets = get_all_opportunities()
         kalshi_markets = fetch_kalshi_weather_markets()
         opportunities = find_arbitrage_opportunities(poly_markets, kalshi_markets)
@@ -548,7 +548,7 @@ def handle_leaderboard():
     """Top weather traderlar."""
     send_msg("🔄 <b>Leaderboard yuklanmoqda...</b>")
     try:
-        from leaderboard import fetch_weather_leaderboard, format_leaderboard_telegram
+        from src.leaderboard.leaderboard import fetch_weather_leaderboard, format_leaderboard_telegram
         traders = fetch_weather_leaderboard(period="MONTH", limit=15)
         if traders:
             msg = format_leaderboard_telegram(traders)
@@ -563,7 +563,7 @@ def handle_copytrade():
     """Top traderlar signallari."""
     send_msg("🔄 <b>Copy trade signallari yuklanmoqda...</b>")
     try:
-        from leaderboard import get_copy_signals, format_copy_signals_telegram
+        from src.leaderboard.leaderboard import get_copy_signals, format_copy_signals_telegram
         signals = get_copy_signals(top_n=5)
         if signals:
             msg = format_copy_signals_telegram(signals)

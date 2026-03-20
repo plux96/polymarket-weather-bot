@@ -15,6 +15,10 @@ results.json
 *.log
 *.db
 
+# Papkalar
+logs/
+storage/
+
 # Node
 dashboard/node_modules/
 dashboard/dist/

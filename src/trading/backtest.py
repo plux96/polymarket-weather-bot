@@ -12,8 +12,8 @@ import json
 import re
 import requests
 from datetime import datetime, timezone
-from markets import CITY_COORDS, extract_city, extract_temp_range
-from telegram_bot import send_message
+from src.trading.markets import CITY_COORDS, extract_city, extract_temp_range
+from src.notifications.telegram_bot import send_message
 
 GAMMA_API = "https://gamma-api.polymarket.com"
 HISTORICAL_URL = "https://historical-forecast-api.open-meteo.com/v1/forecast"

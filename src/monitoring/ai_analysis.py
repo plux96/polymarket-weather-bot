@@ -14,7 +14,7 @@ import logging
 import requests
 from datetime import datetime, timezone
 
-from markets import CITY_COORDS
+from src.trading.markets import CITY_COORDS
 
 logger = logging.getLogger(__name__)
 

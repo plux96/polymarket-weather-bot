@@ -35,8 +35,8 @@ def load_json(filename):
 
 @app.get("/api/status")
 def get_status():
-    trades = load_json("trades.json")
-    results = load_json("results.json")
+    trades = load_json("storage/trades.json")
+    results = load_json("storage/results.json")
     return {
         "status": "running",
         "mode": "DRY RUN" if os.getenv("DRY_RUN", "true").lower() == "true" else "LIVE",
@@ -52,27 +52,27 @@ def get_status():
 
 @app.get("/api/trades")
 def get_trades(limit: int = 100):
-    trades = load_json("trades.json")
+    trades = load_json("storage/trades.json")
     return trades[-limit:]
 
 
 @app.get("/api/trades/today")
 def get_today_trades():
-    trades = load_json("trades.json")
+    trades = load_json("storage/trades.json")
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     return [t for t in trades if t.get("timestamp", "").startswith(today)]
 
 
 @app.get("/api/results")
 def get_results():
-    results = load_json("results.json")
+    results = load_json("storage/results.json")
     return results
 
 
 @app.get("/api/pnl")
 def get_pnl():
-    trades = load_json("trades.json")
-    results = load_json("results.json")
+    trades = load_json("storage/trades.json")
+    results = load_json("storage/results.json")
 
     total_bet = sum(t.get("bet_size", 0) for t in trades)
     wins = sum(1 for r in results if r.get("won") is True)
@@ -106,8 +106,8 @@ def get_pnl():
 
 @app.get("/api/cities")
 def get_cities():
-    trades = load_json("trades.json")
-    results = load_json("results.json")
+    trades = load_json("storage/trades.json")
+    results = load_json("storage/results.json")
 
     result_map = {r.get("market_id"): r for r in results}
 
@@ -140,7 +140,7 @@ def get_cities():
 @app.get("/api/signals")
 def get_signals():
     """Oxirgi scan signallarini qaytaradi."""
-    trades = load_json("trades.json")
+    trades = load_json("storage/trades.json")
     # Oxirgi scan — oxirgi 15 daqiqadagi savdolar
     now = datetime.now(timezone.utc)
     recent = []
@@ -170,7 +170,7 @@ def get_models():
 @app.get("/api/activity")
 def get_activity():
     """Oxirgi 24 soatlik faollik — dashboard chart uchun."""
-    trades = load_json("trades.json")
+    trades = load_json("storage/trades.json")
     now = datetime.now(timezone.utc)
 
     hourly = {}
@@ -202,7 +202,7 @@ def get_activity():
 @app.get("/api/investment")
 def get_investment():
     """Jami quyilgan pul va natija vaqtlari."""
-    trades = load_json("trades.json")
+    trades = load_json("storage/trades.json")
 
     total_invested = sum(t.get("bet_size", 0) for t in trades)
 
@@ -239,7 +239,7 @@ def get_investment():
 def get_leaderboard():
     """Top weather traderlar."""
     try:
-        from leaderboard import fetch_weather_leaderboard
+        from src.leaderboard.leaderboard import fetch_weather_leaderboard
         return fetch_weather_leaderboard(period="MONTH", limit=20)
     except Exception as e:
         return {"error": str(e)}
@@ -248,7 +248,7 @@ def get_leaderboard():
 def get_copy_signals():
     """Copy trading signallari."""
     try:
-        from leaderboard import get_copy_signals
+        from src.leaderboard.leaderboard import get_copy_signals
         return get_copy_signals(top_n=5)
     except Exception as e:
         return {"error": str(e)}

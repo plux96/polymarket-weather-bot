@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.polymarket.api</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/plux96/polymarket-weather-bot/venv/bin/python</string>
+        <string>/Users/plux96/polymarket-weather-bot/api_server.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/plux96/polymarket-weather-bot</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/plux96/polymarket-weather-bot/api.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/plux96/polymarket-weather-bot/api_error.log</string>
+</dict>
+</plist>

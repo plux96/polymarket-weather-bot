@@ -17,9 +17,10 @@ import os
 from datetime import datetime, timezone
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ACCURACY_FILE = os.path.join(BASE_DIR, "accuracy.json")
-RESULTS_FILE = os.path.join(BASE_DIR, "results.json")
-TRADES_FILE = os.path.join(BASE_DIR, "trades.json")
+PROJECT_ROOT = os.path.join(BASE_DIR, "..", "..")
+ACCURACY_FILE = os.path.join(PROJECT_ROOT, "storage", "accuracy.json")
+RESULTS_FILE = os.path.join(PROJECT_ROOT, "storage", "results.json")
+TRADES_FILE = os.path.join(PROJECT_ROOT, "storage", "trades.json")
 
 ALL_MODELS = [
     "gfs", "ecmwf", "icon", "gem", "bom",

@@ -7,10 +7,10 @@ import json
 import os
 import requests
 from datetime import datetime, timezone, timedelta
-from strategy import load_trades, TRADES_FILE
+from src.trading.strategy import load_trades, TRADES_FILE
 
 GAMMA_API = "https://gamma-api.polymarket.com"
-RESULTS_FILE = "results.json"
+RESULTS_FILE = "storage/results.json"
 
 
 def load_results() -> list[dict]:

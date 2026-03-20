@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 
 import websockets
 
-from telegram_bot import send_message
+from src.notifications.telegram_bot import send_message
 
 logger = logging.getLogger(__name__)
 
@@ -180,7 +180,8 @@ async def _handle_message(raw_msg: str):
     try:
         msg = json.loads(raw_msg)
     except json.JSONDecodeError:
-        logger.warning(f"JSON parse xatosi: {raw_msg[:200]}")
+        # Polymarket ba'zan plain-text yuboradi (masalan: "INVALID OPERATION")
+        logger.debug(f"JSON emas WS xabar: {raw_msg[:100]}")
         return
 
     msg_type = msg.get("type", "")

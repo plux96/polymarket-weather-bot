@@ -30,7 +30,7 @@ Jami: 16 ta model, ~156+ ensemble member
 import os
 import requests
 from datetime import datetime, timezone
-from markets import CITY_COORDS
+from src.trading.markets import CITY_COORDS
 
 ENSEMBLE_URL = "https://ensemble-api.open-meteo.com/v1/ensemble"
 DETERMINISTIC_URL = "https://api.open-meteo.com/v1/forecast"

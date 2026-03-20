@@ -7,10 +7,10 @@ Multi-model savdo strategiyasi.
 import json
 import os
 from datetime import datetime, timezone
-from weather import fetch_all_models, multi_model_probability
-from markets import fetch_weather_events, parse_weather_event, CITY_COORDS
+from src.weather.models import fetch_all_models, multi_model_probability
+from src.trading.markets import fetch_weather_events, parse_weather_event, CITY_COORDS
 
-TRADES_FILE = "trades.json"
+TRADES_FILE = "storage/trades.json"
 
 
 def load_trades() -> list[dict]:
