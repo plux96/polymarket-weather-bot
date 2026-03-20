@@ -37,6 +37,7 @@ REPORT_HOURS = [0, 6, 8, 12, 18]
 
 last_report_hour = -1
 last_signals = []
+last_executed = []
 
 
 def get_clob_client():
@@ -105,7 +106,7 @@ def apply_smart_timing(signals: list) -> list:
 
 def run_scan():
     """Bitta to'liq scan sikli — barcha modullar integratsiya qilingan."""
-    global last_signals, last_report_hour
+    global last_signals, last_executed, last_report_hour
 
     now = datetime.now(timezone.utc)
     console.print(Panel(
@@ -148,6 +149,7 @@ def run_scan():
         console.print(f"\n[bold green]{len(signals)} ta signal! (bugun: {today_count}/{MAX_TRADES_PER_DAY})[/]\n")
 
         client = get_clob_client()
+        executed = []
         for i, signal in enumerate(signals, 1):
             unit = "°" + signal.get("unit", "F")
             tl, th = signal["temp_low"], signal["temp_high"]
@@ -167,7 +169,9 @@ def run_scan():
                 f"{signal['model_prob']:.0%} vs ${signal['market_price']:.2f} | "
                 f"Bet: [green]${signal['bet_size']:.2f}[/] {phase_icon}"
             )
-            execute_trade(client, signal)
+            if execute_trade(client, signal):
+                executed.append(signal)
+        last_executed = executed
 
     # ═══════════════════════════════════════
     # Telegram hisobotlar
@@ -177,7 +181,7 @@ def run_scan():
         last_report_hour = current_hour
         console.print("[cyan]Telegram hisobot...[/]")
 
-        send_signals(signals)
+        send_signals(last_executed)
 
         # Kunlik xulosa (00:00 UTC)
         if current_hour == 0:
@@ -247,9 +251,9 @@ def main():
     # WebSocket monitor boshlash
     start_websocket_monitor()
 
-    # Birinchi signal'ni Telegram'ga
-    if last_signals:
-        send_signals(last_signals)
+    # Birinchi bajarilgan savdolarni Telegram'ga
+    if last_executed:
+        send_signals(last_executed)
 
     # Schedule
     schedule.every(SCAN_INTERVAL_MIN).minutes.do(run_scan)
