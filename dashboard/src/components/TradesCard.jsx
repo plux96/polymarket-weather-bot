@@ -69,6 +69,8 @@ export default function TradesCard() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.02 }}
                     layout
+                    onClick={() => t.condition_id && window.open(`https://polymarket.com/event/${t.condition_id}`, '_blank')}
+                    style={{ cursor: t.condition_id ? 'pointer' : 'default' }}
                   >
                     <td>{formatTime(t.timestamp)}</td>
                     <td style={{ fontFamily: 'var(--font)', fontWeight: 500 }}>{t.city}</td>
