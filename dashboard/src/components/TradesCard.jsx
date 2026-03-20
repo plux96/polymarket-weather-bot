@@ -69,7 +69,17 @@ export default function TradesCard() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.02 }}
                     layout
-                    onClick={() => t.condition_id && window.open(`https://polymarket.com/event/${t.condition_id}`, '_blank')}
+                    onClick={async () => {
+                      if (!t.condition_id) return;
+                      try {
+                        const res = await fetch(`https://clob.polymarket.com/markets/${t.condition_id}`);
+                        const d = await res.json();
+                        const slug = d.market_slug;
+                        window.open(`https://polymarket.com/event/${slug}`, '_blank');
+                      } catch {
+                        window.open(`https://polymarket.com/markets`, '_blank');
+                      }
+                    }}
                     style={{ cursor: t.condition_id ? 'pointer' : 'default' }}
                   >
                     <td>{formatTime(t.timestamp)}</td>
