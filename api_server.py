@@ -5,6 +5,7 @@ FastAPI + CORS bilan ishlaydi.
 
 import os
 import json
+import httpx
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -234,6 +235,21 @@ def get_investment():
         "timeline": timeline,
         "mode": "DRY RUN" if os.getenv("DRY_RUN", "true").lower() == "true" else "LIVE",
     }
+
+@app.get("/api/market-url/{market_id}")
+def get_market_url(market_id: str):
+    """Polymarket event slug — CORS muammosini oldini olish uchun proxy."""
+    try:
+        r = httpx.get(
+            f"https://gamma-api.polymarket.com/markets?id={market_id}",
+            timeout=5,
+        )
+        data = r.json()
+        slug = data[0].get("events", [{}])[0].get("slug") if data else None
+        return {"slug": slug}
+    except Exception:
+        return {"slug": None}
+
 
 @app.get("/api/leaderboard")
 def get_leaderboard():
