@@ -87,6 +87,7 @@ function usePollingFetchCustom(endpoint, interval) {
   return { data, loading, error, refetch: fetchData };
 }
 
+export function useResults()    { return usePollingFetch('/api/results'); }
 export function useInvestment()   { return usePollingFetch('/api/investment'); }
 export function useLeaderboard()  { return usePollingFetchCustom('/api/leaderboard', 30000); }
 export function useCopySignals()  { return usePollingFetchCustom('/api/copy-signals', 30000); }

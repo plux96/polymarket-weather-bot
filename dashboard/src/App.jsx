@@ -12,6 +12,7 @@ import ActivityChart from './components/ActivityChart';
 import InvestmentCard from './components/InvestmentCard';
 import LeaderboardCard from './components/LeaderboardCard';
 import CopyTradeCard from './components/CopyTradeCard';
+import ResultsCard from './components/ResultsCard';
 
 function Header() {
   const [time, setTime] = useState(new Date());
@@ -70,6 +71,7 @@ export default function App() {
           <ActivityChart />
           <CitiesCard />
           <ModelsCard />
+          <ResultsCard />
           <LeaderboardCard />
           <CopyTradeCard />
         </motion.div>
