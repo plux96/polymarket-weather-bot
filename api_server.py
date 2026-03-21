@@ -52,9 +52,37 @@ def get_status():
 
 
 @app.get("/api/trades")
-def get_trades(limit: int = 100):
+def get_trades(page: int = 1, per_page: int = 20):
     trades = load_json("storage/trades.json")
-    return trades[-limit:]
+    results = load_json("storage/results.json")
+
+    # results ni market_id bo'yicha map
+    result_map = {str(r.get("market_id")): r for r in results}
+
+    # Har bir trade ga status qo'shamiz
+    enriched = []
+    for t in reversed(trades):
+        mid = str(t.get("market_id", ""))
+        r = result_map.get(mid)
+        enriched.append({
+            **t,
+            "status": "resolved" if r else "pending",
+            "won": r.get("won") if r else None,
+            "pnl": r.get("pnl") if r else None,
+            "outcome": r.get("outcome") if r else None,
+        })
+
+    total = len(enriched)
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    return {
+        "trades": enriched[start:end],
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": (total + per_page - 1) // per_page,
+    }
 
 
 @app.get("/api/trades/today")
